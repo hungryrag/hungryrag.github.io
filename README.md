@@ -1,1 +1,1 @@
-Check out the minimal portfolio at https://hungryrag.github.io/minimal-portfolio
+Check out the minimal portfolio at https://hungryrag.github.io/
