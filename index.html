@@ -1,503 +1,1428 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="scroll-smooth">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Supriyo Jana — Backend & Cloud Architecture Engineer</title>
-<meta name="description" content="Supriyo Jana — Backend Engineer specializing in Node.js, Azure cloud-native systems, event-driven architecture, and high-throughput streaming pipelines." />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Supriyo Jana — Backend & Cloud Engineer</title>
+    <meta
+      name="description"
+      content="Supriyo Jana — Backend & Cloud Engineer specializing in Node.js, Azure cloud-native systems, event-driven architecture, and high-throughput streaming pipelines."
+    />
 
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-<!-- Tailwind CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ['Inter', 'sans-serif'],
-          mono: ['JetBrains Mono', 'monospace'],
-        },
-        colors: {
-          emerald: {
-            glow: '#10b98133',
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              mono: ["JetBrains Mono", "monospace"],
+            },
+            colors: {
+              emerald: {
+                glow: "#10b98133",
+              },
+              cyan: {
+                glow: "#22d3ee33",
+              },
+            },
+            boxShadow: {
+              "glow-emerald":
+                "0 0 0 1px rgba(16,185,129,0.15), 0 0 30px -5px rgba(16,185,129,0.25)",
+              "glow-cyan":
+                "0 0 0 1px rgba(34,211,238,0.15), 0 0 30px -5px rgba(34,211,238,0.25)",
+            },
+            animation: {
+              "pulse-slow": "pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+            },
           },
-          cyan: {
-            glow: '#22d3ee33',
-          },
         },
-        boxShadow: {
-          'glow-emerald': '0 0 0 1px rgba(16,185,129,0.15), 0 0 30px -5px rgba(16,185,129,0.25)',
-          'glow-cyan': '0 0 0 1px rgba(34,211,238,0.15), 0 0 30px -5px rgba(34,211,238,0.25)',
-        },
-        animation: {
-          'pulse-slow': 'pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        },
-      },
-    },
-  };
-</script>
+      };
+    </script>
 
-<!-- Lucide Icons -->
-<script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-<style>
-  body {
-    background-color: #020617;
-    background-image:
-      radial-gradient(circle at 15% 10%, rgba(16, 185, 129, 0.06), transparent 35%),
-      radial-gradient(circle at 85% 20%, rgba(34, 211, 238, 0.07), transparent 35%),
-      linear-gradient(to bottom, rgba(255,255,255,0.015) 1px, transparent 1px),
-      linear-gradient(to right, rgba(255,255,255,0.015) 1px, transparent 1px);
-    background-size: auto, auto, 42px 42px, 42px 42px;
-  }
-  ::selection { background: #10b981; color: #020617; }
-  .mono-tag {
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .scanline-card {
-    position: relative;
-    overflow: hidden;
-  }
-  .scanline-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.03) 50%, transparent 60%);
-    transform: translateX(-100%);
-    transition: transform 0.8s ease;
-  }
-  .scanline-card:hover::before {
-    transform: translateX(100%);
-  }
-  ::-webkit-scrollbar { width: 10px; }
-  ::-webkit-scrollbar-track { background: #020617; }
-  ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 8px; }
-  ::-webkit-scrollbar-thumb:hover { background: #334155; }
-
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .fade-in-up {
-    animation: fadeInUp 0.7s ease both;
-  }
-</style>
-</head>
-<body class="bg-slate-950 text-slate-300 font-sans antialiased selection:bg-emerald-500 selection:text-slate-950">
-
-<!-- ============ NAVBAR ============ -->
-<header class="fixed top-0 inset-x-0 z-50 border-b border-slate-800/70 bg-slate-950/70 backdrop-blur-lg">
-  <div class="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
-    <a href="#top" class="flex items-center gap-2.5 group">
-      <span class="relative flex h-2.5 w-2.5">
-        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-      </span>
-      <span class="mono-tag text-sm sm:text-base font-semibold text-slate-100 tracking-tight">supriyo.sys</span>
-      <span class="hidden sm:inline mono-tag text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/30 text-emerald-400 bg-emerald-500/10">Node: Ready</span>
-    </a>
-
-    <nav class="hidden md:flex items-center gap-8 mono-tag text-[13px] text-slate-400">
-      <a href="#work" class="hover:text-emerald-400 transition-colors">Work</a>
-      <a href="#architecture" class="hover:text-emerald-400 transition-colors">Architecture</a>
-      <a href="#stack" class="hover:text-emerald-400 transition-colors">Core Stack</a>
-      <a href="#contact" class="hover:text-emerald-400 transition-colors">Contact</a>
-    </nav>
-
-    <div class="flex items-center gap-3">
-      <a href="https://github.com/" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="p-2 rounded-lg text-slate-400 hover:text-emerald-400 hover:bg-slate-800/60 transition-colors">
-        <i data-lucide="github" class="w-[18px] h-[18px]"></i>
-      </a>
-      <a href="https://linkedin.com/in/supriyo-jana" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="p-2 rounded-lg text-slate-400 hover:text-cyan-400 hover:bg-slate-800/60 transition-colors">
-        <i data-lucide="linkedin" class="w-[18px] h-[18px]"></i>
-      </a>
-      <a href="#" download
-         class="hidden sm:inline-flex items-center gap-1.5 mono-tag text-xs font-medium px-3.5 py-2 rounded-lg bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-colors shadow-glow-emerald">
-        <i data-lucide="download" class="w-3.5 h-3.5"></i>
-        Download CV
-      </a>
-    </div>
-  </div>
-</header>
-
-<main id="top">
-
-  <!-- ============ HERO ============ -->
-  <section class="relative pt-40 pb-24 px-5 sm:px-8 border-b border-slate-800/70">
-    <div class="max-w-5xl mx-auto text-center fade-in-up">
-      <div class="inline-flex items-center gap-2 mono-tag text-[11px] tracking-widest uppercase px-3 py-1.5 rounded-full border border-slate-700 bg-slate-900/70 text-cyan-400 mb-8">
-        <i data-lucide="activity" class="w-3.5 h-3.5"></i>
-        Backend & Cloud Architecture // 5+ YOE
-      </div>
-
-      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-50 leading-[1.15]">
-        Engineering resilient
-        <span class="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">distributed backends</span>,
-        streaming pipelines, and cloud-native systems.
-      </h1>
-
-      <p class="mt-6 max-w-2xl mx-auto text-base sm:text-lg text-slate-400 leading-relaxed">
-        I'm Supriyo Jana — building high-throughput services and event-driven architecture with
-        <span class="text-slate-200 font-medium">Node.js</span>, <span class="text-slate-200 font-medium">Express</span>,
-        <span class="text-slate-200 font-medium">SQL Server</span>, <span class="text-slate-200 font-medium">Kafka</span>, and
-        <span class="text-slate-200 font-medium">Azure-native services</span> for enterprise-scale platforms.
-      </p>
-
-      <!-- Fast Action Row -->
-      <div class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mono-tag text-sm">
-        <div class="relative group">
-          <button id="copy-email-btn"
-            class="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-slate-800 bg-slate-900/70 text-slate-300 hover:border-emerald-500/50 hover:text-emerald-400 transition-colors">
-            <i data-lucide="mail" class="w-4 h-4"></i>
-            supriyojana6@gmail.com
-            <i data-lucide="copy" class="w-3.5 h-3.5 opacity-60"></i>
-          </button>
-          <span id="copy-tooltip"
-            class="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-emerald-500 text-slate-950 text-[11px] font-semibold px-2.5 py-1 opacity-0 transition-opacity duration-200">
-            Copied!
-          </span>
-        </div>
-        <div class="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-slate-800 bg-slate-900/70 text-slate-300">
-          <i data-lucide="map-pin" class="w-4 h-4"></i>
-          Kolkata, India
-        </div>
-      </div>
-
-      <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-        <a href="#architecture"
-           class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-emerald-500 text-slate-950 font-semibold text-sm hover:bg-emerald-400 transition-colors shadow-glow-emerald">
-          <i data-lucide="git-branch" class="w-4 h-4"></i>
-          Explore Architecture
-        </a>
-        <a href="#contact"
-           class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-slate-700 text-slate-200 font-semibold text-sm hover:border-cyan-400/60 hover:text-cyan-300 transition-colors">
-          <i data-lucide="terminal" class="w-4 h-4"></i>
-          Get in Touch
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ TELEMETRY METRICS ============ -->
-  <section class="px-5 sm:px-8 py-16 border-b border-slate-800/70">
-    <div class="max-w-6xl mx-auto">
-      <p class="mono-tag text-xs tracking-widest uppercase text-slate-500 mb-6 flex items-center gap-2">
-        <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 text-emerald-400"></i>
-        Key Telemetry & Impact Metrics
-      </p>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-
-        <div class="scanline-card rounded-xl border border-slate-800 bg-slate-900/60 p-6 hover:border-emerald-500/40 hover:shadow-glow-emerald transition-all">
-          <i data-lucide="radio-tower" class="w-5 h-5 text-emerald-400 mb-4"></i>
-          <div class="text-3xl font-extrabold text-slate-50 mono-tag">1M+<span class="text-base font-medium text-slate-500"> / day</span></div>
-          <p class="mt-2 text-sm text-slate-400">IoT telemetry messages ingested &amp; processed on Azure.</p>
-        </div>
-
-        <div class="scanline-card rounded-xl border border-slate-800 bg-slate-900/60 p-6 hover:border-cyan-400/40 hover:shadow-glow-cyan transition-all">
-          <i data-lucide="database-zap" class="w-5 h-5 text-cyan-400 mb-4"></i>
-          <div class="text-3xl font-extrabold text-slate-50 mono-tag">8.5M+<span class="text-base font-medium text-slate-500"> rows</span></div>
-          <p class="mt-2 text-sm text-slate-400">Streaming pipeline writes to Azure Blob Storage with zero OOM failures.</p>
-        </div>
-
-        <div class="scanline-card rounded-xl border border-slate-800 bg-slate-900/60 p-6 hover:border-emerald-500/40 hover:shadow-glow-emerald transition-all">
-          <i data-lucide="graduation-cap" class="w-5 h-5 text-emerald-400 mb-4"></i>
-          <div class="text-3xl font-extrabold text-slate-50 mono-tag">9.51<span class="text-base font-medium text-slate-500"> CGPA</span></div>
-          <p class="mt-2 text-sm text-slate-400">B.Tech, University of Engineering &amp; Management, Kolkata.</p>
-        </div>
-
-        <div class="scanline-card rounded-xl border border-slate-800 bg-slate-900/60 p-6 hover:border-cyan-400/40 hover:shadow-glow-cyan transition-all">
-          <i data-lucide="layers" class="w-5 h-5 text-cyan-400 mb-4"></i>
-          <div class="text-3xl font-extrabold text-slate-50 mono-tag">5+<span class="text-base font-medium text-slate-500"> Years</span></div>
-          <p class="mt-2 text-sm text-slate-400">Distributed systems, event streaming &amp; platform modernization.</p>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ FEATURED ENGINEERING HIGHLIGHTS ============ -->
-  <section id="architecture" class="px-5 sm:px-8 py-20 border-b border-slate-800/70">
-    <div class="max-w-6xl mx-auto">
-      <div id="work" class="mb-12">
-        <p class="mono-tag text-xs tracking-widest uppercase text-cyan-400 mb-3 flex items-center gap-2">
-          <i data-lucide="server-cog" class="w-3.5 h-3.5"></i>
-          Featured Engineering Highlights & Systems
-        </p>
-        <h2 class="text-2xl sm:text-3xl font-bold text-slate-50">Architecture Breakdown</h2>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-        <!-- Card 1 -->
-        <article class="rounded-2xl border border-slate-800 bg-slate-900/60 p-7 hover:border-emerald-500/40 transition-colors">
-          <div class="flex items-start justify-between gap-4 mb-4">
-            <div>
-              <h3 class="text-lg font-semibold text-slate-100">Azure IoT Platform &amp; Event Telemetry</h3>
-              <p class="mono-tag text-xs text-slate-500 mt-1">Dec 2024 — Present · TCS</p>
-            </div>
-            <span class="shrink-0 mono-tag text-[10px] px-2 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">ACTIVE</span>
-          </div>
-          <ul class="space-y-2.5 text-sm text-slate-400">
-            <li class="flex gap-2"><i data-lucide="chevron-right" class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"></i>Node.js/Express REST APIs for high-volume telemetry ingestion.</li>
-            <li class="flex gap-2"><i data-lucide="chevron-right" class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"></i>Event-driven Azure Functions for dead-letter queue recovery.</li>
-            <li class="flex gap-2"><i data-lucide="chevron-right" class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"></i>Centralized observability across Service Bus, Event Hubs &amp; App Services.</li>
-            <li class="flex gap-2"><i data-lucide="shield-check" class="w-4 h-4 shrink-0 text-emerald-400 mt-0.5"></i>Azure Key Vault-managed SAS token rotation with automated expiry alerts.</li>
-          </ul>
-          <div class="flex flex-wrap gap-2 mt-5">
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300">Node.js</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300">Azure Functions</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300">Service Bus</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300">Key Vault</span>
-          </div>
-        </article>
-
-        <!-- Card 2 -->
-        <article class="rounded-2xl border border-slate-800 bg-slate-900/60 p-7 hover:border-cyan-400/40 transition-colors">
-          <div class="flex items-start justify-between gap-4 mb-4">
-            <div>
-              <h3 class="text-lg font-semibold text-slate-100">High-Throughput Streaming &amp; Export Engine</h3>
-              <p class="mono-tag text-xs text-slate-500 mt-1">Azure IoT Platform · TCS</p>
-            </div>
-            <span class="shrink-0 mono-tag text-[10px] px-2 py-1 rounded-full border border-cyan-400/30 bg-cyan-400/10 text-cyan-300">STREAMING</span>
-          </div>
-          <ul class="space-y-2.5 text-sm text-slate-400">
-            <li class="flex gap-2"><i data-lucide="chevron-right" class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"></i>Replaced monolithic in-memory buffering with streaming writes.</li>
-            <li class="flex gap-2"><i data-lucide="chevron-right" class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"></i>Direct-to-Blob Storage upload pipeline for report generation.</li>
-            <li class="flex gap-2"><i data-lucide="chevron-right" class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"></i>Scaled export capacity beyond 8.5M records with zero OOM failures.</li>
-          </ul>
-          <div class="flex flex-wrap gap-2 mt-5">
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300">Node.js Streams</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300">Azure Blob Storage</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300">Backpressure</span>
-          </div>
-        </article>
-
-        <!-- Card 3 -->
-        <article class="rounded-2xl border border-slate-800 bg-slate-900/60 p-7 hover:border-emerald-500/40 transition-colors">
-          <div class="flex items-start justify-between gap-4 mb-4">
-            <div>
-              <h3 class="text-lg font-semibold text-slate-100">Confluent Kafka Migration &amp; Enterprise Processing</h3>
-              <p class="mono-tag text-xs text-slate-500 mt-1">Jan 2022 — Mar 2023 · TCS</p>
-            </div>
-            <span class="shrink-0 mono-tag text-[10px] px-2 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">MIGRATED</span>
-          </div>
-          <ul class="space-y-2.5 text-sm text-slate-400">
-            <li class="flex gap-2"><i data-lucide="chevron-right" class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"></i>Led Apache Kafka → Confluent Kafka transition, owning rollout after project lead's departure.</li>
-            <li class="flex gap-2"><i data-lucide="chevron-right" class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"></i>Coordinated 5–6 engineers across validation, testing &amp; deployment.</li>
-            <li class="flex gap-2"><i data-lucide="chevron-right" class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"></i>Databricks PySpark pipelines consolidating multi-source enterprise data.</li>
-            <li class="flex gap-2"><i data-lucide="chevron-right" class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"></i>Led migration of 3 ETL applications from GemFire 8 to GemFire 9.</li>
-          </ul>
-          <div class="flex flex-wrap gap-2 mt-5">
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300">Confluent Kafka</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300">Databricks</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300">PySpark</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300">GemFire</span>
-          </div>
-        </article>
-
-        <!-- Card 4 -->
-        <article class="rounded-2xl border border-slate-800 bg-slate-900/60 p-7 hover:border-cyan-400/40 transition-colors">
-          <div class="flex items-start justify-between gap-4 mb-4">
-            <div>
-              <h3 class="text-lg font-semibold text-slate-100">JIRA–ServiceNow Enterprise Integration (IRIS)</h3>
-              <p class="mono-tag text-xs text-slate-500 mt-1">Apr 2023 — Dec 2024 · TCS</p>
-            </div>
-            <span class="shrink-0 mono-tag text-[10px] px-2 py-1 rounded-full border border-cyan-400/30 bg-cyan-400/10 text-cyan-300">INTEGRATION</span>
-          </div>
-          <ul class="space-y-2.5 text-sm text-slate-400">
-            <li class="flex gap-2"><i data-lucide="chevron-right" class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"></i>Node.js/Express REST APIs integrating JIRA &amp; ServiceNow into one platform.</li>
-            <li class="flex gap-2"><i data-lucide="chevron-right" class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"></i>Bidirectional ticket linking across incidents, change requests &amp; problem records.</li>
-            <li class="flex gap-2"><i data-lucide="chevron-right" class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"></i>Workflow synchronization with multi-source search, sort &amp; filtering.</li>
-          </ul>
-          <div class="flex flex-wrap gap-2 mt-5">
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300">REST APIs</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300">JIRA API</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300">ServiceNow API</span>
-          </div>
-        </article>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ TECHNICAL ARSENAL ============ -->
-  <section id="stack" class="px-5 sm:px-8 py-20 border-b border-slate-800/70">
-    <div class="max-w-6xl mx-auto">
-      <p class="mono-tag text-xs tracking-widest uppercase text-emerald-400 mb-3 flex items-center gap-2">
-        <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
-        Technical Arsenal
-      </p>
-      <h2 class="text-2xl sm:text-3xl font-bold text-slate-50 mb-10">Core Stack</h2>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-
-        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
-          <div class="flex items-center gap-2 mb-4 text-slate-100 font-semibold">
-            <i data-lucide="server" class="w-4 h-4 text-emerald-400"></i>
-            Core Backend
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">Node.js</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">Express.js</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">TypeScript</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">Java (Spring Boot)</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">Distributed Systems</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">REST APIs</span>
-          </div>
-        </div>
-
-        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
-          <div class="flex items-center gap-2 mb-4 text-slate-100 font-semibold">
-            <i data-lucide="cloud" class="w-4 h-4 text-cyan-400"></i>
-            Cloud &amp; Messaging
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">Azure Functions</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">Azure Service Bus</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">Azure Event Hubs</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">Azure IoT Hub</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">Confluent Kafka</span>
-          </div>
-        </div>
-
-        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
-          <div class="flex items-center gap-2 mb-4 text-slate-100 font-semibold">
-            <i data-lucide="database" class="w-4 h-4 text-emerald-400"></i>
-            Storage &amp; Data
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">Microsoft SQL Server</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">PostgreSQL</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">Azure Cosmos DB</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">Azure Blob Storage</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">PySpark / Databricks</span>
-          </div>
-        </div>
-
-        <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
-          <div class="flex items-center gap-2 mb-4 text-slate-100 font-semibold">
-            <i data-lucide="gauge" class="w-4 h-4 text-cyan-400"></i>
-            Observability &amp; DevOps
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">Azure Application Insights</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">Azure Monitor</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">Docker</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">Jenkins</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">CI/CD</span>
-            <span class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300">Git</span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ TERMINAL / CONTACT ============ -->
-  <section id="contact" class="px-5 sm:px-8 py-20">
-    <div class="max-w-4xl mx-auto text-center mb-10">
-      <p class="mono-tag text-xs tracking-widest uppercase text-emerald-400 mb-3 flex items-center justify-center gap-2">
-        <i data-lucide="terminal-square" class="w-3.5 h-3.5"></i>
-        Quick Contact
-      </p>
-      <h2 class="text-2xl sm:text-3xl font-bold text-slate-50">Let's build something reliable.</h2>
-    </div>
-
-    <div class="max-w-3xl mx-auto rounded-2xl border border-slate-800 bg-black/60 shadow-2xl overflow-hidden">
-      <div class="flex items-center gap-2 px-4 py-3 border-b border-slate-800 bg-slate-900/80">
-        <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
-        <span class="w-3 h-3 rounded-full bg-yellow-500/80"></span>
-        <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
-        <span class="mono-tag text-xs text-slate-500 ml-2">bash — contact.sh</span>
-      </div>
-      <div class="p-6 mono-tag text-sm leading-relaxed overflow-x-auto">
-        <p class="text-slate-500">$ <span class="text-emerald-400">curl</span> -X POST https://supriyo.jana/contact \</p>
-        <p class="text-slate-300 pl-4">-d '{ "status": "<span class="text-cyan-300">open_to_collaborate</span>" }'</p>
-        <p class="text-slate-500 mt-3">&gt; <span class="text-emerald-400">200 OK</span> — connection established. awaiting response...</p>
-      </div>
-    </div>
-
-    <div class="max-w-3xl mx-auto mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
-      <a href="mailto:supriyojana6@gmail.com"
-         class="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/60 px-5 py-4 hover:border-emerald-500/40 transition-colors">
-        <i data-lucide="mail" class="w-4 h-4 text-emerald-400 shrink-0"></i>
-        <span class="mono-tag text-sm text-slate-300 truncate">supriyojana6@gmail.com</span>
-      </a>
-      <a href="https://linkedin.com/in/supriyo-jana" target="_blank" rel="noopener noreferrer"
-         class="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/60 px-5 py-4 hover:border-cyan-400/40 transition-colors">
-        <i data-lucide="linkedin" class="w-4 h-4 text-cyan-400 shrink-0"></i>
-        <span class="mono-tag text-sm text-slate-300 truncate">linkedin.com/in/supriyo-jana</span>
-      </a>
-      <a href="tel:+919123053741"
-         class="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/60 px-5 py-4 hover:border-emerald-500/40 transition-colors">
-        <i data-lucide="phone" class="w-4 h-4 text-emerald-400 shrink-0"></i>
-        <span class="mono-tag text-sm text-slate-300 truncate">+91 9123053741</span>
-      </a>
-    </div>
-  </section>
-
-</main>
-
-<!-- ============ FOOTER ============ -->
-<footer class="border-t border-slate-800/70 px-5 sm:px-8 py-8">
-  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 mono-tag text-xs text-slate-500">
-    <p>&copy; <span id="year"></span> Supriyo Jana. All rights reserved.</p>
-    <p class="flex items-center gap-1.5">
-      Built with <i data-lucide="wind" class="w-3.5 h-3.5 text-cyan-400"></i> Tailwind CSS · Hosted on GitHub Pages
-    </p>
-  </div>
-</footer>
-
-<script>
-  // Initialize Lucide icons
-  lucide.createIcons();
-
-  // Footer year
-  document.getElementById('year').textContent = new Date().getFullYear();
-
-  // Click-to-copy email
-  const copyBtn = document.getElementById('copy-email-btn');
-  const copyTooltip = document.getElementById('copy-tooltip');
-  if (copyBtn) {
-    copyBtn.addEventListener('click', async () => {
-      const email = 'supriyojana6@gmail.com';
-      try {
-        await navigator.clipboard.writeText(email);
-      } catch (err) {
-        const temp = document.createElement('textarea');
-        temp.value = email;
-        document.body.appendChild(temp);
-        temp.select();
-        document.execCommand('copy');
-        document.body.removeChild(temp);
+    <style>
+      body {
+        background-color: #020617;
+        background-image:
+          radial-gradient(
+            circle at 15% 10%,
+            rgba(16, 185, 129, 0.06),
+            transparent 35%
+          ),
+          radial-gradient(
+            circle at 85% 20%,
+            rgba(34, 211, 238, 0.07),
+            transparent 35%
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.015) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.015) 1px,
+            transparent 1px
+          );
+        background-size:
+          auto,
+          auto,
+          42px 42px,
+          42px 42px;
       }
-      copyTooltip.classList.remove('opacity-0');
-      copyTooltip.classList.add('opacity-100');
-      setTimeout(() => {
-        copyTooltip.classList.remove('opacity-100');
-        copyTooltip.classList.add('opacity-0');
-      }, 1500);
-    });
-  }
+      ::selection {
+        background: #10b981;
+        color: #020617;
+      }
+      .mono-tag {
+        font-family: "JetBrains Mono", monospace;
+      }
+      .scanline-card {
+        position: relative;
+        overflow: hidden;
+      }
+      .scanline-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          115deg,
+          transparent 40%,
+          rgba(255, 255, 255, 0.03) 50%,
+          transparent 60%
+        );
+        transform: translateX(-100%);
+        transition: transform 0.8s ease;
+      }
+      .scanline-card:hover::before {
+        transform: translateX(100%);
+      }
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #020617;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #1e293b;
+        border-radius: 8px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #334155;
+      }
 
-  // Smooth scrolling for in-page nav links
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener('click', function (e) {
-      const targetId = this.getAttribute('href');
-      if (targetId.length > 1) {
-        const target = document.querySelector(targetId);
-        if (target) {
-          e.preventDefault();
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
       }
-    });
-  });
-</script>
+      .fade-in-up {
+        animation: fadeInUp 0.7s ease both;
+      }
 
-</body>
+      /* Blinking terminal cursor */
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+      .typing-cursor {
+        animation: blink 1s step-start infinite;
+      }
+
+      /* Scrolling log ticker */
+      @keyframes ticker {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+      .ticker-track {
+        width: max-content;
+        animation: ticker 28s linear infinite;
+      }
+      .ticker-track:hover {
+        animation-play-state: paused;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-950 text-slate-300 font-sans antialiased selection:bg-emerald-500 selection:text-slate-950"
+  >
+    <!-- ============ NAVBAR ============ -->
+    <header
+      class="fixed top-0 inset-x-0 z-50 border-b border-slate-800/70 bg-slate-950/70 backdrop-blur-lg"
+    >
+      <div
+        class="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between"
+      >
+        <a href="#top" class="flex items-center gap-2.5 group">
+          <span class="relative flex h-2.5 w-2.5">
+            <span
+              class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"
+            ></span>
+            <span
+              class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"
+            ></span>
+          </span>
+          <span
+            class="mono-tag text-sm sm:text-base font-semibold text-slate-100 tracking-tight"
+            >supriyo.sys</span
+          >
+          <span
+            class="hidden sm:inline mono-tag text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/30 text-emerald-400 bg-emerald-500/10"
+            >Node: Ready</span
+          >
+        </a>
+
+        <nav
+          class="hidden md:flex items-center gap-8 mono-tag text-[13px] text-slate-400"
+        >
+          <a href="#work" class="hover:text-emerald-400 transition-colors"
+            >Work</a
+          >
+          <a
+            href="#architecture"
+            class="hover:text-emerald-400 transition-colors"
+            >Architecture</a
+          >
+          <a href="#stack" class="hover:text-emerald-400 transition-colors"
+            >Core Stack</a
+          >
+          <a href="#contact" class="hover:text-emerald-400 transition-colors"
+            >Contact</a
+          >
+        </nav>
+
+        <div class="flex items-center gap-2 sm:gap-3">
+          <a
+            href="https://github.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+            class="hidden sm:inline-flex p-2 rounded-lg text-slate-400 hover:text-emerald-400 hover:bg-slate-800/60 transition-colors"
+          >
+            <i data-lucide="github" class="w-[18px] h-[18px]"></i>
+          </a>
+          <a
+            href="https://linkedin.com/in/supriyo-jana"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+            class="hidden sm:inline-flex p-2 rounded-lg text-slate-400 hover:text-cyan-400 hover:bg-slate-800/60 transition-colors"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-[18px] h-[18px]"
+              aria-hidden="true"
+            >
+              <path
+                d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM7.114 20.452H3.558V9h3.556v11.452z"
+              />
+            </svg>
+          </a>
+          <a
+            href="./Supriyo_Jana_CV.pdf"
+            download
+            class="hidden md:inline-flex items-center gap-1.5 mono-tag text-xs font-medium px-3.5 py-2 rounded-lg bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-colors shadow-glow-emerald"
+          >
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            Download CV
+          </a>
+          <button
+            id="mobile-menu-btn"
+            type="button"
+            aria-label="Toggle navigation menu"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+            class="md:hidden p-2 rounded-lg border border-slate-800 text-slate-300 hover:text-emerald-400 hover:border-emerald-500/40 transition-colors"
+          >
+            <i data-lucide="menu" class="w-5 h-5" id="menu-icon-open"></i>
+            <i data-lucide="x" class="w-5 h-5 hidden" id="menu-icon-close"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile menu panel -->
+      <div
+        id="mobile-menu"
+        class="md:hidden hidden border-t border-slate-800/70 bg-slate-950/95 backdrop-blur-lg px-5 py-4"
+      >
+        <nav class="flex flex-col gap-1 mono-tag text-sm">
+          <a
+            href="#work"
+            class="px-3 py-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/70 transition-colors"
+            >Work</a
+          >
+          <a
+            href="#architecture"
+            class="px-3 py-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/70 transition-colors"
+            >Architecture</a
+          >
+          <a
+            href="#stack"
+            class="px-3 py-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/70 transition-colors"
+            >Core Stack</a
+          >
+          <a
+            href="#contact"
+            class="px-3 py-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/70 transition-colors"
+            >Contact</a
+          >
+        </nav>
+        <div
+          class="flex items-center gap-3 mt-3 pt-3 border-t border-slate-800"
+        >
+          <a
+            href="https://github.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+            class="p-2 rounded-lg text-slate-400 hover:text-emerald-400 hover:bg-slate-900/70 transition-colors"
+          >
+            <i data-lucide="github" class="w-[18px] h-[18px]"></i>
+          </a>
+          <a
+            href="https://linkedin.com/in/supriyo-jana"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+            class="p-2 rounded-lg text-slate-400 hover:text-cyan-400 hover:bg-slate-900/70 transition-colors"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-[18px] h-[18px]"
+              aria-hidden="true"
+            >
+              <path
+                d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM7.114 20.452H3.558V9h3.556v11.452z"
+              />
+            </svg>
+          </a>
+          <a
+            href="./Supriyo_Jana_CV.pdf"
+            download
+            class="ml-auto inline-flex items-center gap-1.5 mono-tag text-xs font-medium px-3.5 py-2 rounded-lg bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-colors shadow-glow-emerald"
+          >
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            Download CV
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main id="top">
+      <!-- ============ HERO ============ -->
+      <section
+        class="relative pt-40 pb-24 px-5 sm:px-8 border-b border-slate-800/70"
+      >
+        <div class="max-w-5xl mx-auto text-center fade-in-up">
+          <div
+            class="inline-flex items-center gap-2 mono-tag text-[11px] tracking-widest uppercase px-3 py-1.5 rounded-full border border-slate-700 bg-slate-900/70 text-cyan-400 mb-8"
+          >
+            <i data-lucide="activity" class="w-3.5 h-3.5"></i>
+            Backend & Cloud Architecture // 6+ YOE
+          </div>
+
+          <h1
+            class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-50 leading-[1.15]"
+          >
+            Engineering resilient
+            <span
+              class="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent"
+              >distributed backends</span
+            >, streaming pipelines, and cloud-native systems.
+          </h1>
+
+          <p
+            class="mt-6 max-w-2xl mx-auto text-base sm:text-lg text-slate-400 leading-relaxed"
+          >
+            I'm Supriyo Jana — building high-throughput services and
+            event-driven architecture with
+            <span class="text-slate-200 font-medium">Node.js</span>,
+            <span class="text-slate-200 font-medium">Express</span>,
+            <span class="text-slate-200 font-medium">SQL Server</span>,
+            <span class="text-slate-200 font-medium">React.js</span>,
+            <span class="text-slate-200 font-medium">Python (Fast API)</span>,
+            and
+            <span class="text-slate-200 font-medium"
+              >Azure-native services</span
+            >
+            for enterprise-scale platforms.
+          </p>
+
+          <!-- Fast Action Row -->
+          <div
+            class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mono-tag text-sm"
+          >
+            <div class="relative group">
+              <button
+                id="copy-email-btn"
+                class="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-slate-800 bg-slate-900/70 text-slate-300 hover:border-emerald-500/50 hover:text-emerald-400 transition-colors"
+              >
+                <i data-lucide="mail" class="w-4 h-4"></i>
+                supriyojana6@gmail.com
+                <i data-lucide="copy" class="w-3.5 h-3.5 opacity-60"></i>
+              </button>
+              <span
+                id="copy-tooltip"
+                class="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-emerald-500 text-slate-950 text-[11px] font-semibold px-2.5 py-1 opacity-0 transition-opacity duration-200"
+              >
+                Copied!
+              </span>
+            </div>
+            <div
+              class="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-slate-800 bg-slate-900/70 text-slate-300"
+            >
+              <i data-lucide="map-pin" class="w-4 h-4"></i>
+              Kolkata, India
+            </div>
+          </div>
+
+          <div
+            class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3"
+          >
+            <a
+              href="#architecture"
+              class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-emerald-500 text-slate-950 font-semibold text-sm hover:bg-emerald-400 transition-colors shadow-glow-emerald"
+            >
+              <i data-lucide="git-branch" class="w-4 h-4"></i>
+              Explore Architecture
+            </a>
+            <a
+              href="#contact"
+              class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg border border-slate-700 text-slate-200 font-semibold text-sm hover:border-cyan-400/60 hover:text-cyan-300 transition-colors"
+            >
+              <i data-lucide="terminal" class="w-4 h-4"></i>
+              Get in Touch
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ LIVE LOG TICKER ============ -->
+      <section
+        class="border-b border-slate-800/70 bg-slate-950/60 py-3 overflow-hidden"
+        aria-hidden="true"
+      >
+        <div class="flex">
+          <div
+            class="ticker-track flex items-center gap-10 pr-10 mono-tag text-xs text-slate-500 whitespace-nowrap"
+          >
+            <span class="flex items-center gap-2"
+              ><i
+                data-lucide="arrow-down-right"
+                class="w-3.5 h-3.5 text-emerald-400"
+              ></i
+              >GET /telemetry/stream
+              <span class="text-emerald-400">200</span> 12ms</span
+            >
+            <span class="flex items-center gap-2"
+              ><i
+                data-lucide="arrow-down-right"
+                class="w-3.5 h-3.5 text-emerald-400"
+              ></i
+              >POST /alerts/dispatch
+              <span class="text-emerald-400">201</span> 8ms</span
+            >
+            <span class="flex items-center gap-2"
+              ><i data-lucide="zap" class="w-3.5 h-3.5 text-cyan-400"></i
+              >azure-fn: dead-letter-recovery invoked</span
+            >
+            <span class="flex items-center gap-2"
+              ><i
+                data-lucide="upload-cloud"
+                class="w-3.5 h-3.5 text-cyan-400"
+              ></i
+              >blob-upload: chunk 3,214,000 / 8,500,000 rows</span
+            >
+            <span class="flex items-center gap-2"
+              ><i
+                data-lucide="heart-pulse"
+                class="w-3.5 h-3.5 text-emerald-400"
+              ></i
+              >service-bus queue depth: 0 (healthy)</span
+            >
+            <span class="flex items-center gap-2"
+              ><i
+                data-lucide="arrow-down-right"
+                class="w-3.5 h-3.5 text-emerald-400"
+              ></i
+              >GET /telemetry/stream
+              <span class="text-emerald-400">200</span> 12ms</span
+            >
+            <span class="flex items-center gap-2"
+              ><i
+                data-lucide="arrow-down-right"
+                class="w-3.5 h-3.5 text-emerald-400"
+              ></i
+              >POST /alerts/dispatch
+              <span class="text-emerald-400">201</span> 8ms</span
+            >
+            <span class="flex items-center gap-2"
+              ><i data-lucide="zap" class="w-3.5 h-3.5 text-cyan-400"></i
+              >azure-fn: dead-letter-recovery invoked</span
+            >
+            <span class="flex items-center gap-2"
+              ><i
+                data-lucide="upload-cloud"
+                class="w-3.5 h-3.5 text-cyan-400"
+              ></i
+              >blob-upload: chunk 3,214,000 / 8,500,000 rows</span
+            >
+            <span class="flex items-center gap-2"
+              ><i
+                data-lucide="heart-pulse"
+                class="w-3.5 h-3.5 text-emerald-400"
+              ></i
+              >service-bus queue depth: 0 (healthy)</span
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ TELEMETRY METRICS ============ -->
+      <section class="px-5 sm:px-8 py-16 border-b border-slate-800/70">
+        <div class="max-w-6xl mx-auto">
+          <p
+            class="mono-tag text-xs tracking-widest uppercase text-slate-500 mb-6 flex items-center gap-2"
+          >
+            <i
+              data-lucide="bar-chart-3"
+              class="w-3.5 h-3.5 text-emerald-400"
+            ></i>
+            Key Telemetry & Impact Metrics
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div
+              class="scanline-card rounded-xl border border-slate-800 bg-slate-900/60 p-6 hover:border-emerald-500/40 hover:shadow-glow-emerald transition-all"
+            >
+              <i
+                data-lucide="radio-tower"
+                class="w-5 h-5 text-emerald-400 mb-4"
+              ></i>
+              <div class="text-3xl font-extrabold text-slate-50 mono-tag">
+                1M+<span class="text-base font-medium text-slate-500">
+                  / day</span
+                >
+              </div>
+              <p class="mt-2 text-sm text-slate-400">
+                IoT telemetry messages ingested &amp; processed on Azure.
+              </p>
+              <svg
+                class="w-full h-8 mt-4"
+                viewBox="0 0 100 30"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <polyline
+                  fill="none"
+                  stroke="#10b981"
+                  stroke-width="2"
+                  points="0,24 15,20 30,22 45,14 60,17 75,8 90,10 100,4"
+                />
+              </svg>
+            </div>
+
+            <div
+              class="scanline-card rounded-xl border border-slate-800 bg-slate-900/60 p-6 hover:border-cyan-400/40 hover:shadow-glow-cyan transition-all"
+            >
+              <i
+                data-lucide="database-zap"
+                class="w-5 h-5 text-cyan-400 mb-4"
+              ></i>
+              <div class="text-3xl font-extrabold text-slate-50 mono-tag">
+                8.5M+<span class="text-base font-medium text-slate-500">
+                  rows</span
+                >
+              </div>
+              <p class="mt-2 text-sm text-slate-400">
+                Streaming pipeline writes to Azure Blob Storage with zero OOM
+                failures.
+              </p>
+              <svg
+                class="w-full h-8 mt-4"
+                viewBox="0 0 100 30"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <polyline
+                  fill="none"
+                  stroke="#22d3ee"
+                  stroke-width="2"
+                  points="0,26 15,23 30,18 45,20 60,12 75,14 90,6 100,7"
+                />
+              </svg>
+            </div>
+
+            <div
+              class="scanline-card rounded-xl border border-slate-800 bg-slate-900/60 p-6 hover:border-emerald-500/40 hover:shadow-glow-emerald transition-all"
+            >
+              <i
+                data-lucide="graduation-cap"
+                class="w-5 h-5 text-emerald-400 mb-4"
+              ></i>
+              <div class="text-3xl font-extrabold text-slate-50 mono-tag">
+                9.51<span class="text-base font-medium text-slate-500">
+                  CGPA</span
+                >
+              </div>
+              <p class="mt-2 text-sm text-slate-400">
+                B.Tech, University of Engineering &amp; Management, Kolkata.
+              </p>
+              <svg
+                class="w-full h-8 mt-4"
+                viewBox="0 0 100 30"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <polyline
+                  fill="none"
+                  stroke="#10b981"
+                  stroke-width="2"
+                  points="0,20 15,18 30,19 45,10 60,13 75,9 90,5 100,6"
+                />
+              </svg>
+            </div>
+
+            <div
+              class="scanline-card rounded-xl border border-slate-800 bg-slate-900/60 p-6 hover:border-cyan-400/40 hover:shadow-glow-cyan transition-all"
+            >
+              <i data-lucide="layers" class="w-5 h-5 text-cyan-400 mb-4"></i>
+              <div class="text-3xl font-extrabold text-slate-50 mono-tag">
+                5+<span class="text-base font-medium text-slate-500">
+                  Years</span
+                >
+              </div>
+              <p class="mt-2 text-sm text-slate-400">
+                Distributed systems, event streaming &amp; platform
+                modernization.
+              </p>
+              <svg
+                class="w-full h-8 mt-4"
+                viewBox="0 0 100 30"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <polyline
+                  fill="none"
+                  stroke="#22d3ee"
+                  stroke-width="2"
+                  points="0,22 15,19 30,20 45,15 60,17 75,11 90,9 100,3"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ FEATURED ENGINEERING HIGHLIGHTS ============ -->
+      <section
+        id="architecture"
+        class="px-5 sm:px-8 py-20 border-b border-slate-800/70"
+      >
+        <div class="max-w-6xl mx-auto">
+          <div id="work" class="mb-12">
+            <p
+              class="mono-tag text-xs tracking-widest uppercase text-cyan-400 mb-3 flex items-center gap-2"
+            >
+              <i data-lucide="server-cog" class="w-3.5 h-3.5"></i>
+              Featured Engineering Highlights & Systems
+            </p>
+            <h2 class="text-2xl sm:text-3xl font-bold text-slate-50">
+              Architecture Breakdown
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Card 1: Azure IoT Platform (combined telemetry + streaming/export scope) -->
+            <article
+              class="lg:col-span-2 rounded-2xl border border-slate-800 bg-slate-900/60 p-7 hover:border-emerald-500/40 transition-colors"
+            >
+              <div class="flex items-start justify-between gap-4 mb-4">
+                <div>
+                  <h3 class="text-lg font-semibold text-slate-100">
+                    Azure IoT Platform &amp; Event Telemetry
+                  </h3>
+                  <p class="mono-tag text-xs text-slate-500 mt-1">
+                    Dec 2024 — Present · TCS
+                  </p>
+                </div>
+                <span
+                  class="shrink-0 mono-tag text-[10px] px-2 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                  >ACTIVE</span
+                >
+              </div>
+              <div class="grid sm:grid-cols-2 gap-x-8 gap-y-5">
+                <div>
+                  <p
+                    class="mono-tag text-[11px] uppercase tracking-widest text-slate-500 mb-2.5"
+                  >
+                    Platform &amp; Observability
+                  </p>
+                  <ul class="space-y-2.5 text-sm text-slate-400">
+                    <li class="flex gap-2">
+                      <i
+                        data-lucide="chevron-right"
+                        class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"
+                      ></i
+                      >Node.js/Express REST APIs for high-volume telemetry
+                      ingestion.
+                    </li>
+                    <li class="flex gap-2">
+                      <i
+                        data-lucide="chevron-right"
+                        class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"
+                      ></i
+                      >Event-driven Azure Functions for dead-letter queue
+                      recovery.
+                    </li>
+                    <li class="flex gap-2">
+                      <i
+                        data-lucide="chevron-right"
+                        class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"
+                      ></i
+                      >Centralized observability across Service Bus, Event Hubs
+                      &amp; App Services.
+                    </li>
+                    <li class="flex gap-2">
+                      <i
+                        data-lucide="shield-check"
+                        class="w-4 h-4 shrink-0 text-emerald-400 mt-0.5"
+                      ></i
+                      >Azure Key Vault-managed SAS token rotation with automated
+                      expiry alerts.
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <p
+                    class="mono-tag text-[11px] uppercase tracking-widest text-slate-500 mb-2.5"
+                  >
+                    Streaming &amp; Export Engine
+                  </p>
+                  <ul class="space-y-2.5 text-sm text-slate-400">
+                    <li class="flex gap-2">
+                      <i
+                        data-lucide="chevron-right"
+                        class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"
+                      ></i
+                      >Replaced monolithic in-memory buffering with streaming
+                      writes.
+                    </li>
+                    <li class="flex gap-2">
+                      <i
+                        data-lucide="chevron-right"
+                        class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"
+                      ></i
+                      >Direct-to-Blob Storage upload pipeline for report
+                      generation.
+                    </li>
+                    <li class="flex gap-2">
+                      <i
+                        data-lucide="chevron-right"
+                        class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"
+                      ></i
+                      >Scaled export capacity beyond 8.5M records with zero OOM
+                      failures.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-2 mt-5">
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300"
+                  >Node.js</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300"
+                  >Azure Functions</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300"
+                  >Service Bus</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300"
+                  >Key Vault</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300"
+                  >Node.js Streams</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300"
+                  >Azure Blob Storage</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300"
+                  >Backpressure</span
+                >
+              </div>
+            </article>
+
+            <!-- Card 2 -->
+            <article
+              class="rounded-2xl border border-slate-800 bg-slate-900/60 p-7 hover:border-cyan-400/40 transition-colors"
+            >
+              <div class="flex items-start justify-between gap-4 mb-4">
+                <div>
+                  <h3 class="text-lg font-semibold text-slate-100">
+                    JIRA–ServiceNow Enterprise Integration (IRIS)
+                  </h3>
+                  <p class="mono-tag text-xs text-slate-500 mt-1">
+                    Apr 2023 — Dec 2024 · TCS
+                  </p>
+                </div>
+                <span
+                  class="shrink-0 mono-tag text-[10px] px-2 py-1 rounded-full border border-cyan-400/30 bg-cyan-400/10 text-cyan-300"
+                  >INTEGRATION</span
+                >
+              </div>
+              <ul class="space-y-2.5 text-sm text-slate-400">
+                <li class="flex gap-2">
+                  <i
+                    data-lucide="chevron-right"
+                    class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"
+                  ></i
+                  >Node.js/Express REST APIs integrating JIRA &amp; ServiceNow
+                  into one platform.
+                </li>
+                <li class="flex gap-2">
+                  <i
+                    data-lucide="chevron-right"
+                    class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"
+                  ></i
+                  >Bidirectional ticket linking across incidents, change
+                  requests &amp; problem records.
+                </li>
+                <li class="flex gap-2">
+                  <i
+                    data-lucide="chevron-right"
+                    class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"
+                  ></i
+                  >Workflow synchronization with multi-source search, sort &amp;
+                  filtering.
+                </li>
+              </ul>
+              <div class="flex flex-wrap gap-2 mt-5">
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300"
+                  >REST APIs</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300"
+                  >JIRA API</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300"
+                  >ServiceNow API</span
+                >
+              </div>
+            </article>
+
+            <!-- Card 3 -->
+            <article
+              class="rounded-2xl border border-slate-800 bg-slate-900/60 p-7 hover:border-emerald-500/40 transition-colors"
+            >
+              <div class="flex items-start justify-between gap-4 mb-4">
+                <div>
+                  <h3 class="text-lg font-semibold text-slate-100">
+                    Confluent Kafka Migration &amp; Enterprise Processing
+                  </h3>
+                  <p class="mono-tag text-xs text-slate-500 mt-1">
+                    Jan 2022 — Mar 2023 · TCS
+                  </p>
+                </div>
+                <span
+                  class="shrink-0 mono-tag text-[10px] px-2 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                  >MIGRATED</span
+                >
+              </div>
+              <ul class="space-y-2.5 text-sm text-slate-400">
+                <li class="flex gap-2">
+                  <i
+                    data-lucide="chevron-right"
+                    class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"
+                  ></i
+                  >Led Apache Kafka → Confluent Kafka transition, owning rollout
+                  after project lead's departure.
+                </li>
+                <li class="flex gap-2">
+                  <i
+                    data-lucide="chevron-right"
+                    class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"
+                  ></i
+                  >Coordinated 5–6 engineers across validation, testing &amp;
+                  deployment.
+                </li>
+                <li class="flex gap-2">
+                  <i
+                    data-lucide="chevron-right"
+                    class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"
+                  ></i
+                  >Databricks PySpark pipelines consolidating multi-source
+                  enterprise data.
+                </li>
+                <li class="flex gap-2">
+                  <i
+                    data-lucide="chevron-right"
+                    class="w-4 h-4 shrink-0 text-cyan-400 mt-0.5"
+                  ></i
+                  >Led migration of 3 ETL applications from GemFire 8 to GemFire
+                  9.
+                </li>
+              </ul>
+              <div class="flex flex-wrap gap-2 mt-5">
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300"
+                  >Confluent Kafka</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300"
+                  >Databricks</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300"
+                  >PySpark</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800/80 border border-slate-700 text-slate-300"
+                  >GemFire</span
+                >
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ TECHNICAL ARSENAL ============ -->
+      <section
+        id="stack"
+        class="px-5 sm:px-8 py-20 border-b border-slate-800/70"
+      >
+        <div class="max-w-6xl mx-auto">
+          <p
+            class="mono-tag text-xs tracking-widest uppercase text-emerald-400 mb-3 flex items-center gap-2"
+          >
+            <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
+            Technical Arsenal
+          </p>
+          <h2 class="text-2xl sm:text-3xl font-bold text-slate-50 mb-10">
+            Core Stack
+          </h2>
+
+          <div class="columns-1 sm:columns-2 lg:columns-4 gap-5">
+            <div
+              class="mb-5 break-inside-avoid rounded-2xl border border-slate-800 bg-slate-900/60 p-6"
+            >
+              <div
+                class="flex items-center gap-2 mb-4 text-slate-100 font-semibold"
+              >
+                <i data-lucide="server" class="w-4 h-4 text-emerald-400"></i>
+                Backend
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Node.js</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Express.js</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >REST APIs</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Microservices</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Event-Driven Architecture</span
+                >
+              </div>
+            </div>
+
+            <div
+              class="mb-5 break-inside-avoid rounded-2xl border border-slate-800 bg-slate-900/60 p-6"
+            >
+              <div
+                class="flex items-center gap-2 mb-4 text-slate-100 font-semibold"
+              >
+                <i data-lucide="code-2" class="w-4 h-4 text-cyan-400"></i>
+                Languages
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >JavaScript</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >TypeScript</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Python</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >SQL</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Java</span
+                >
+              </div>
+            </div>
+
+            <div
+              class="mb-5 break-inside-avoid rounded-2xl border border-slate-800 bg-slate-900/60 p-6"
+            >
+              <div
+                class="flex items-center gap-2 mb-4 text-slate-100 font-semibold"
+              >
+                <i
+                  data-lucide="shield-check"
+                  class="w-4 h-4 text-emerald-400"
+                ></i>
+                API &amp; Security
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >OAuth 2.0</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >JWT</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Swagger / OpenAPI</span
+                >
+              </div>
+            </div>
+
+            <div
+              class="mb-5 break-inside-avoid rounded-2xl border border-slate-800 bg-slate-900/60 p-6"
+            >
+              <div
+                class="flex items-center gap-2 mb-4 text-slate-100 font-semibold"
+              >
+                <i data-lucide="cloud" class="w-4 h-4 text-emerald-400"></i>
+                Cloud &amp; Messaging
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Azure Functions</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Azure Service Bus</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Azure Event Hubs</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Azure IoT Hub</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Azure Blob Storage</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Azure Key Vault</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Azure App Services</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Azure Application Insights</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Azure Monitor</span
+                >
+              </div>
+            </div>
+
+            <div
+              class="mb-5 break-inside-avoid rounded-2xl border border-slate-800 bg-slate-900/60 p-6"
+            >
+              <div
+                class="flex items-center gap-2 mb-4 text-slate-100 font-semibold"
+              >
+                <i data-lucide="database" class="w-4 h-4 text-cyan-400"></i>
+                Databases
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Microsoft SQL Server</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >PostgreSQL</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Azure Cosmos DB</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >MongoDB</span
+                >
+              </div>
+            </div>
+
+            <div
+              class="mb-5 break-inside-avoid rounded-2xl border border-slate-800 bg-slate-900/60 p-6"
+            >
+              <div
+                class="flex items-center gap-2 mb-4 text-slate-100 font-semibold"
+              >
+                <i
+                  data-lucide="layout-template"
+                  class="w-4 h-4 text-emerald-400"
+                ></i>
+                Frontend
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >React.js</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Material UI</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >HTML5</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >CSS</span
+                >
+              </div>
+            </div>
+
+            <div
+              class="mb-5 break-inside-avoid rounded-2xl border border-slate-800 bg-slate-900/60 p-6"
+            >
+              <div
+                class="flex items-center gap-2 mb-4 text-slate-100 font-semibold"
+              >
+                <i
+                  data-lucide="git-branch"
+                  class="w-4 h-4 text-emerald-400"
+                ></i>
+                DevOps
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Git</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Jenkins</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Docker</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >CI/CD</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Linux</span
+                >
+              </div>
+            </div>
+
+            <div
+              class="mb-5 break-inside-avoid rounded-2xl border border-slate-800 bg-slate-900/60 p-6"
+            >
+              <div
+                class="flex items-center gap-2 mb-4 text-slate-100 font-semibold"
+              >
+                <i data-lucide="database-zap" class="w-4 h-4 text-cyan-400"></i>
+                Data Engineering
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >Azure Databricks</span
+                >
+                <span
+                  class="mono-tag text-[11px] px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300"
+                  >PySpark</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ TERMINAL / CONTACT ============ -->
+      <section id="contact" class="px-5 sm:px-8 py-20">
+        <div class="max-w-4xl mx-auto text-center mb-10">
+          <p
+            class="mono-tag text-xs tracking-widest uppercase text-emerald-400 mb-3 flex items-center justify-center gap-2"
+          >
+            <i data-lucide="terminal-square" class="w-3.5 h-3.5"></i>
+            Quick Contact
+          </p>
+          <h2 class="text-2xl sm:text-3xl font-bold text-slate-50">
+            Let's build something reliable.
+          </h2>
+        </div>
+
+        <div
+          id="terminal-card"
+          class="max-w-3xl mx-auto rounded-2xl border border-slate-800 bg-black/60 shadow-2xl overflow-hidden"
+        >
+          <div
+            class="flex items-center gap-2 px-4 py-3 border-b border-slate-800 bg-slate-900/80"
+          >
+            <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
+            <span class="w-3 h-3 rounded-full bg-yellow-500/80"></span>
+            <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
+            <span class="mono-tag text-xs text-slate-500 ml-2"
+              >bash — contact.sh</span
+            >
+          </div>
+          <div
+            class="p-6 mono-tag text-sm leading-relaxed overflow-x-auto min-h-[112px]"
+          >
+            <p class="text-slate-500">
+              $ <span id="t-line1" class="text-slate-200"></span
+              ><span class="typing-cursor">_</span>
+            </p>
+            <p class="text-slate-300 pl-4"><span id="t-line2"></span></p>
+            <p class="mt-3" id="t-line3-wrap" style="display: none">
+              &gt; <span id="t-line3" class="text-emerald-400"></span
+              ><span id="t-line3b" class="text-slate-500"></span>
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="max-w-3xl mx-auto mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4"
+        >
+          <a
+            href="mailto:supriyojana6@gmail.com"
+            class="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/60 px-5 py-4 hover:border-emerald-500/40 transition-colors"
+          >
+            <i data-lucide="mail" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+            <span class="mono-tag text-sm text-slate-300 truncate"
+              >supriyojana6@gmail.com</span
+            >
+          </a>
+          <a
+            href="https://linkedin.com/in/supriyo-jana"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/60 px-5 py-4 hover:border-cyan-400/40 transition-colors"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-4 h-4 text-cyan-400 shrink-0"
+              aria-hidden="true"
+            >
+              <path
+                d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM7.114 20.452H3.558V9h3.556v11.452z"
+              />
+            </svg>
+            <span class="mono-tag text-sm text-slate-300 truncate"
+              >linkedin.com/in/supriyo-jana</span
+            >
+          </a>
+          <a
+            href="tel:+919123053741"
+            class="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/60 px-5 py-4 hover:border-emerald-500/40 transition-colors"
+          >
+            <i
+              data-lucide="phone"
+              class="w-4 h-4 text-emerald-400 shrink-0"
+            ></i>
+            <span class="mono-tag text-sm text-slate-300 truncate"
+              >+91 9123053741</span
+            >
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="border-t border-slate-800/70 px-5 sm:px-8 py-8">
+      <div
+        class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 mono-tag text-xs text-slate-500"
+      >
+        <p>&copy; <span id="year"></span> Supriyo Jana. All rights reserved.</p>
+        <p class="flex items-center gap-1.5">
+          Built with
+          <i data-lucide="wind" class="w-3.5 h-3.5 text-cyan-400"></i> Tailwind
+          CSS · Hosted on GitHub Pages
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      // Initialize Lucide icons
+      lucide.createIcons();
+
+      // Footer year
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      // Mobile menu toggle
+      const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+      const mobileMenu = document.getElementById("mobile-menu");
+      const menuIconOpen = document.getElementById("menu-icon-open");
+      const menuIconClose = document.getElementById("menu-icon-close");
+      if (mobileMenuBtn && mobileMenu) {
+        const closeMobileMenu = () => {
+          mobileMenu.classList.add("hidden");
+          menuIconOpen.classList.remove("hidden");
+          menuIconClose.classList.add("hidden");
+          mobileMenuBtn.setAttribute("aria-expanded", "false");
+        };
+        mobileMenuBtn.addEventListener("click", () => {
+          const isHidden = mobileMenu.classList.contains("hidden");
+          mobileMenu.classList.toggle("hidden");
+          menuIconOpen.classList.toggle("hidden");
+          menuIconClose.classList.toggle("hidden");
+          mobileMenuBtn.setAttribute("aria-expanded", String(isHidden));
+        });
+        mobileMenu.querySelectorAll("a").forEach((link) => {
+          link.addEventListener("click", closeMobileMenu);
+        });
+      }
+
+      // Terminal typewriter effect (plays once when card scrolls into view)
+      const t1 = document.getElementById("t-line1");
+      const t2 = document.getElementById("t-line2");
+      const t3wrap = document.getElementById("t-line3-wrap");
+      const t3 = document.getElementById("t-line3");
+      const t3b = document.getElementById("t-line3b");
+      const terminalCard = document.getElementById("terminal-card");
+
+      function typeInto(el, text, speed) {
+        return new Promise((resolve) => {
+          let i = 0;
+          (function step() {
+            if (i <= text.length) {
+              el.textContent = text.slice(0, i);
+              i++;
+              setTimeout(step, speed);
+            } else {
+              resolve();
+            }
+          })();
+        });
+      }
+
+      async function runTerminalSequence() {
+        await typeInto(t1, "curl -X POST https://supriyo.jana/contact \\", 22);
+        await typeInto(t2, '-d \'{ "status": "open_to_collaborate" }\'', 18);
+        t3wrap.style.display = "block";
+        await typeInto(t3, "200 OK", 40);
+        await typeInto(
+          t3b,
+          " — connection established. awaiting response...",
+          20,
+        );
+      }
+
+      if (terminalCard && t1 && t2) {
+        let terminalTyped = false;
+        const terminalObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting && !terminalTyped) {
+                terminalTyped = true;
+                runTerminalSequence();
+              }
+            });
+          },
+          { threshold: 0.35 },
+        );
+        terminalObserver.observe(terminalCard);
+      }
+
+      // Click-to-copy email
+      const copyBtn = document.getElementById("copy-email-btn");
+      const copyTooltip = document.getElementById("copy-tooltip");
+      if (copyBtn) {
+        copyBtn.addEventListener("click", async () => {
+          const email = "supriyojana6@gmail.com";
+          try {
+            await navigator.clipboard.writeText(email);
+          } catch (err) {
+            const temp = document.createElement("textarea");
+            temp.value = email;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand("copy");
+            document.body.removeChild(temp);
+          }
+          copyTooltip.classList.remove("opacity-0");
+          copyTooltip.classList.add("opacity-100");
+          setTimeout(() => {
+            copyTooltip.classList.remove("opacity-100");
+            copyTooltip.classList.add("opacity-0");
+          }, 1500);
+        });
+      }
+
+      // Smooth scrolling for in-page nav links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          const targetId = this.getAttribute("href");
+          if (targetId.length > 1) {
+            const target = document.querySelector(targetId);
+            if (target) {
+              e.preventDefault();
+              target.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          }
+        });
+      });
+    </script>
+  </body>
 </html>
